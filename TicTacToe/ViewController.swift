@@ -45,12 +45,6 @@ class ViewController: UIViewController {
     @IBOutlet var gameBoard: UIImageView!
     @IBAction func action(_ sender: AnyObject)
     {
-        let image: UIImage? = sender.image
-        print("\(sender.tag!) Button pushed SenderImage:\(sender.image)")
-        print("gameIsActive:")
-        print(gameIsActive)
-        print("sender.image == nil")
-        print(image == nil)
         //check if game is active and space is ocupied!!
         if gameIsActive && image == nil{
             print("Game is active and sender.image is = to nill")
