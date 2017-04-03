@@ -14,11 +14,11 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         playAgainButtion.center.x = self.view.frame.width + 30
-        UIView.animate(withDuration: 4.5, delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 30.0, options: UIViewAnimationOptions.curveEaseIn, animations: ({
+        UIView.animate(withDuration: 2, delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 30.0, options: UIViewAnimationOptions.curveEaseIn, animations: ({
             self.playAgainButtion.center.x = self.view.frame.width / 2
         }), completion: nil)
         output.center.x = self.view.frame.width + 30
-        UIView.animate(withDuration: 4.5, delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 30.0, options: UIViewAnimationOptions.curveEaseIn, animations: ({
+        UIView.animate(withDuration: 2, delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 30.0, options: UIViewAnimationOptions.curveEaseIn, animations: ({
             self.output.center.x = self.view.frame.width / 2
         }), completion: nil)
 
@@ -34,10 +34,9 @@ class ViewController: UIViewController {
     var crossScore = 0
     var noughtScore = 0
     var boardScore = 0
+    var gameState = [0, 0, 0, 0, 0, 0, 0, 0, 0]
     var wins = [7, 56, 448, 73, 146, 292, 273, 84]
     var buttonTags = [1, 2, 4, 8, 16, 32, 64, 128, 256]
-    
-    
 
     @IBOutlet var buttonImage: UIButton!
     @IBOutlet var playAgainButtion: UIButton!
@@ -46,27 +45,34 @@ class ViewController: UIViewController {
     @IBAction func action(_ sender: AnyObject)
     {
         //check if game is active and space is ocupied!!
-        if gameIsActive && image == nil{
-            print("Game is active and sender.image is = to nill")
-            if activePlayer == 1 {
+        if gameIsActive && gameState[sender.tag - 1] == 0{
+           if activePlayer == 1 {
                 //add score to cross
-                crossScore += sender.tag
+                crossScore += buttonTags[sender.tag - 1]
                 //keep track of board
-                boardScore += sender.tag
+                boardScore += buttonTags[sender.tag - 1]
+                //keep track of placement on the board
+                gameState[sender.tag - 1] = activePlayer
                 //animate cross image showing
-                UIView.animate(withDuration: 2, animations: {
-                    sender.setImage(UIImage(named: "Cross"), for: UIControlState())
+                let currentButton = view.viewWithTag(sender.tag) as! UIButton
+                currentButton.setImage(UIImage(named: "Cross"), for: UIControlState())
+                UIView.animate(withDuration: 0.3, animations: {
+                    currentButton.alpha = 1
                 })
                 //set active player
                 activePlayer = 2
             } else {
                 //add score to cross
-                noughtScore += sender.tag
+                noughtScore += buttonTags[sender.tag - 1]
                 //keep track of board
-                boardScore += sender.tag
+                boardScore += buttonTags[sender.tag - 1]
+                //keep track of placement on the board
+                gameState[sender.tag - 1] = activePlayer
                 //animate cross image showing
-                UIView.animate(withDuration: 2, animations: {
-                    sender.setImage(UIImage(named: "Nought"), for: UIControlState())
+                let currentButton = view.viewWithTag(sender.tag) as! UIButton
+                currentButton.setImage(UIImage(named: "Nought"), for: UIControlState())
+                UIView.animate(withDuration: 0.3, animations: {
+                        currentButton.alpha = 1
                 })
                 //set active player
                 activePlayer = 1
@@ -78,19 +84,14 @@ class ViewController: UIViewController {
                 //xwins
                 output.text = "X's Won"
                 gameIsActive = false
-                crossScore = 0
-                noughtScore = 0
-                boardScore = 0
-
+                resetVarGame()
                 playAgainButtion.isHidden = false
                 playAgainButtion.setTitle("Play Again", for: UIControlState())
             }
             if ((wins[i] & noughtScore) == wins[i]) {
                 //owins
                 output.text = "O's Won"
-                crossScore = 0
-                noughtScore = 0
-                boardScore = 0
+                resetVarGame()
                 gameIsActive = false
                 playAgainButtion.isHidden = false
                 playAgainButtion.setTitle("Play Again", for: UIControlState())
@@ -103,9 +104,7 @@ class ViewController: UIViewController {
                 gameIsActive = true
             }
             if !gameIsActive {
-                crossScore = 0
-                noughtScore = 0
-                boardScore = 0
+                resetVarGame()
                 output.text = "It's a Draw"
                 playAgainButtion.isHidden = false
                 playAgainButtion.setTitle("Play Again", for: UIControlState())
@@ -119,11 +118,18 @@ class ViewController: UIViewController {
         output.text = "Lets's play Tic-Tac-Toe"
         gameBoard.isHidden = false
         playAgainButtion.isHidden = true
-        for i in 0..<buttonTags.count {
-            let button = view.viewWithTag(buttonTags[i]) as! UIButton
+        for i in 1...9 {
+            let button = view.viewWithTag(i) as! UIButton
             button.setImage(nil, for: UIControlState())
+            button.alpha = 0.1
         }
-        
+    }
+    
+    func resetVarGame() {
+        crossScore = 0
+        noughtScore = 0
+        boardScore = 0
+        gameState = [0, 0, 0, 0, 0, 0, 0, 0, 0]
     }
 }
 
